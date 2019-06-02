@@ -784,6 +784,7 @@ namespace units
 		typedef base_unit<detail::meter_ratio<-1>,	std::ratio<1>,	std::ratio<-2>>																										pressure_unit;					///< Represents an SI derived unit of pressure
 		typedef base_unit<detail::meter_ratio<0>,	std::ratio<0>,	std::ratio<1>,	std::ratio<0>,	std::ratio<1>>																		charge_unit;					///< Represents an SI derived unit of charge
 		typedef base_unit<detail::meter_ratio<2>,	std::ratio<1>,	std::ratio<-2>>																										energy_unit;					///< Represents an SI derived unit of energy
+		typedef base_unit<detail::meter_ratio<-1>,	std::ratio<1>,	std::ratio<-2>>																										energy_density_unit;					///< Represents an SI derived unit of energy density
 		typedef base_unit<detail::meter_ratio<1>,	std::ratio<1>,	std::ratio<-2>>																										energy_consumption_unit;					///< Represents an SI derived unit of energy consumption
 		typedef base_unit<detail::meter_ratio<-1>,	std::ratio<-1>,	std::ratio<2>>																										energy_efficiency_unit;					///< Represents an SI derived unit of energy efficiency
 		typedef base_unit<detail::meter_ratio<2>,	std::ratio<1>,	std::ratio<-3>>																										power_unit;						///< Represents an SI derived unit of power
@@ -3389,23 +3390,6 @@ namespace units
 	
 	UNIT_ADD_CATEGORY_TRAIT(substance)
 
-	//	UNITS OF LUMINOUS INTENSITY
-	UNIT_ADD_WITH_METRIC_PREFIXES(luminous_intensity, candela, candelas, cd, unit<std::ratio<1>, units::category::luminous_intensity_unit>)
-	
-	UNIT_ADD_CATEGORY_TRAIT(luminous_intensity)
-
-	//	UNITS OF SOLID ANGLE
-	UNIT_ADD_WITH_METRIC_PREFIXES(solid_angle, steradian, steradians, sr, unit<std::ratio<1>, units::category::solid_angle_unit>)
-	UNIT_ADD(solid_angle, degree_squared, degrees_squared, sq_deg, squared<angle::degrees>)
-	UNIT_ADD(solid_angle, spat, spats, sp, unit<std::ratio<4>, steradians, std::ratio<1>>)
-
-	UNIT_ADD_CATEGORY_TRAIT(solid_angle)
-
-	//	FREQUENCY UNITS
-	UNIT_ADD_WITH_METRIC_PREFIXES(frequency, hertz, hertz, Hz, unit<std::ratio<1>, units::category::frequency_unit>)
-
-	UNIT_ADD_CATEGORY_TRAIT(frequency)
-
 	//	VELOCITY UNITS
 	UNIT_ADD(velocity, meters_per_second, meters_per_second, mps, unit<std::ratio<1>, units::category::velocity_unit>)
 	UNIT_ADD(velocity, miles_per_hour, miles_per_hour, mph, compound_unit<length::miles, inverse<time::hour>>)
@@ -3413,34 +3397,19 @@ namespace units
 	
 	UNIT_ADD_CATEGORY_TRAIT(velocity)
 
-	//	UNITS OF ACCELERATION
-	UNIT_ADD(acceleration, meters_per_second_squared, meters_per_second_squared, mps_sq, unit<std::ratio<1>, units::category::acceleration_unit>)
-	UNIT_ADD(acceleration, feet_per_second_squared, feet_per_second_squared, fps_sq, compound_unit<length::feet, inverse<squared<time::seconds>>>)
-	UNIT_ADD(acceleration, standard_gravity, standard_gravity, SG, unit<std::ratio<980665, 100000>, meters_per_second_squared>)
-
-	UNIT_ADD_CATEGORY_TRAIT(acceleration)
-
-	//	UNITS OF FORCE
-	UNIT_ADD_WITH_METRIC_PREFIXES(force, newton, newtons, N, unit<std::ratio<1>, units::category::force_unit>)
-	UNIT_ADD(force, pound, pounds, lbf, compound_unit<acceleration::standard_gravity, mass::pound>)
-
-	UNIT_ADD_CATEGORY_TRAIT(force)
-
-	//	UNITS OF PRESSURE
-	UNIT_ADD_WITH_METRIC_PREFIXES(pressure, pascal, pascals, Pa, unit<std::ratio<1>, units::category::pressure_unit>)
-	UNIT_ADD(pressure, bar, bars, bar, unit<std::ratio<100>, kilo<pascals>>)
-	UNIT_ADD(pressure, mbar, mbars, mbar, unit<std::ratio<1>, milli<bar>>)
-	UNIT_ADD(pressure, atmosphere, atmospheres, atm, unit<std::ratio<101325>, pascals>)
-	UNIT_ADD(pressure, pounds_per_square_inch, pounds_per_square_inch, psi, compound_unit<force::pounds, inverse<squared<length::inch>>>)
-	UNIT_ADD(pressure, torr, torrs, torr, unit<std::ratio<1, 760>, atmospheres>)
-	
-	UNIT_ADD_CATEGORY_TRAIT(pressure)
-
 	//	UNITS OF CHARGE
 	UNIT_ADD_WITH_METRIC_PREFIXES(charge, coulomb, coulombs, C, unit<std::ratio<1>, units::category::charge_unit>)
 	UNIT_ADD_WITH_METRIC_PREFIXES(charge, ampere_hour, ampere_hours, Ah, compound_unit<current::ampere, time::hours>)
 
 	UNIT_ADD_CATEGORY_TRAIT(charge)
+
+	//	UNITS OF VOLUME
+	UNIT_ADD(volume, cubic_meter, cubic_meters, cu_m, unit<std::ratio<1>, units::category::volume_unit>)
+	UNIT_ADD_WITH_METRIC_PREFIXES(volume, liter, liters, L, cubed<deci<length::meter>>)
+	UNIT_ADD(volume, cubic_inch, cubic_inches, cu_in, cubed<length::inches>)
+	UNIT_ADD(volume, gallon, gallons, gal, unit<std::ratio<231>, cubic_inches>)
+
+	UNIT_ADD_CATEGORY_TRAIT(volume)
 
 	//	UNITS OF ENERGY
 	UNIT_ADD_WITH_METRIC_PREFIXES(energy, joule, joules, J, unit<std::ratio<1>, units::category::energy_unit>)
@@ -3448,9 +3417,15 @@ namespace units
 	UNIT_ADD(energy, kilowatt_hour, kilowatt_hours, kWh, unit<std::ratio<36, 10>, megajoules>)
 	UNIT_ADD(energy, watt_hour, watt_hours, Wh, unit<std::ratio<1, 1000>, kilowatt_hours>)
 	UNIT_ADD(energy, gallon_gasoline, gallon_gasoline, Ge, unit<std::ratio<33700, 1>, watt_hour>)
-	//UNIT_ADD(energy, liter_gasoline, liter_gasoline, le, unit<std::ratio<33700, 1>, watt_hour>)
+	//UNIT_ADD(energy, liter_gasoline, liter_gasoline, le, unit<std::ratio<33700, 1>, watt_hour, volume::liter>)
 
 	UNIT_ADD_CATEGORY_TRAIT(energy)
+
+//	//	UNITS OF ENERGY DENSITY
+//	UNIT_ADD(energy_density, watt_hour_per_liter, watt_hour_per_liter, WhpL, compound_unit<energy::watt_hour, inverse<volume::liter>>)
+//	UNIT_ADD(energy_density, gasoline_watt_hour_per_liter, gasoline_watt_hour_per_liter, gasoline_WhpL, unit<std::ratio<4, 1>, watt_hour_per_liter>)
+//	UNIT_ADD_CATEGORY_TRAIT(energy_density)
+//	UNIT_ADD(energy, liter_gasoline, liter_gasoline, le, compound_unit<energy_density::gasoline_watt_hour_per_liter, volume::liter>)
 
 	//	UNITS OF POWER
 	UNIT_ADD_WITH_METRIC_PREFIXES(power, watt, watts, W, unit<std::ratio<1>, units::category::power_unit>)
@@ -3466,75 +3441,6 @@ namespace units
 	UNIT_ADD(voltage, abvolt, abvolts, abV, unit<std::ratio<1, 100000000>, volts>)
 
 	UNIT_ADD_CATEGORY_TRAIT(voltage)
-
-	//	UNITS OF CAPACITANCE
-	UNIT_ADD_WITH_METRIC_PREFIXES(capacitance, farad, farads, F, unit<std::ratio<1>, units::category::capacitance_unit>)
-
-	UNIT_ADD_CATEGORY_TRAIT(capacitance)
-
-	//	UNITS OF IMPEDANCE
-	UNIT_ADD_WITH_METRIC_PREFIXES(impedance, ohm, ohms, Ohm, unit<std::ratio<1>, units::category::impedance_unit>)
-
-	UNIT_ADD_CATEGORY_TRAIT(impedance)
-
-	//	UNITS OF CONDUCTANCE
-	UNIT_ADD_WITH_METRIC_PREFIXES(conductance, siemens, siemens, S, unit<std::ratio<1>, units::category::conductance_unit>)
-	
-	UNIT_ADD_CATEGORY_TRAIT(conductance)
-
-	//	UNITS OF MAGNETIC FLUX
-	UNIT_ADD_WITH_METRIC_PREFIXES(magnetic_flux, weber, webers, Wb, unit<std::ratio<1>, units::category::magnetic_flux_unit>)
-	UNIT_ADD(magnetic_flux, maxwell, maxwells, Mx, unit<std::ratio<1, 100000000>, webers>)
-
-	UNIT_ADD_CATEGORY_TRAIT(magnetic_flux)
-
-	//	UNITS OF MAGNETIC FIELD STRENGTH
-	UNIT_ADD_WITH_METRIC_PREFIXES(magnetic_field_strength, tesla, teslas, Te, unit<std::ratio<1>, units::category::magnetic_field_strength_unit>)
-	UNIT_ADD(magnetic_field_strength, gauss, gauss, G, compound_unit<magnetic_flux::maxwell, inverse<squared<length::centimeter>>>)
-		
-	UNIT_ADD_CATEGORY_TRAIT(magnetic_field_strength)
-
-	//	UNITS OF LUMINOUS FLUX
-	UNIT_ADD_WITH_METRIC_PREFIXES(luminous_flux, lumen, lumens, lm, unit<std::ratio<1>, units::category::luminous_flux_unit>)
-	
-	UNIT_ADD_CATEGORY_TRAIT(luminous_flux)
-
-	//	UNITS OF TORQUE
-	UNIT_ADD(torque, newton_meter, newton_meters, Nm, unit<std::ratio<1>, units::energy::joule>)
-	UNIT_ADD(torque, foot_pound, foot_pounds, ftlb, compound_unit<length::foot, force::pounds>)
-	
-	UNIT_ADD_CATEGORY_TRAIT(torque)
-
-	//	AREA UNITS
-	UNIT_ADD(area, square_meter, square_meters, sq_m, unit<std::ratio<1>, units::category::area_unit>)
-	UNIT_ADD(area, square_foot, square_feet, sq_ft, squared<length::feet>)
-	UNIT_ADD(area, square_inch, square_inches, sq_in, squared<length::inch>)
-	UNIT_ADD(area, square_mile, square_miles, sq_mi, squared<length::miles>)
-	UNIT_ADD(area, square_kilometer, square_kilometers, sq_km, squared<length::kilometers>)
-	UNIT_ADD(area, hectare, hectares, ha, unit<std::ratio<10000>, square_meters>)
-	UNIT_ADD(area, acre, acres, acre, unit<std::ratio<43560>, square_feet>)
-
-	UNIT_ADD_CATEGORY_TRAIT(area)
-
-	//	UNITS OF VOLUME
-	UNIT_ADD(volume, cubic_meter, cubic_meters, cu_m, unit<std::ratio<1>, units::category::volume_unit>)
-	UNIT_ADD_WITH_METRIC_PREFIXES(volume, liter, liters, L, cubed<deci<length::meter>>)
-	UNIT_ADD(volume, cubic_inch, cubic_inches, cu_in, cubed<length::inches>)
-	UNIT_ADD(volume, gallon, gallons, gal, unit<std::ratio<231>, cubic_inches>)
-
-	UNIT_ADD_CATEGORY_TRAIT(volume)
-
-	//	UNITS OF DENSITY
-	UNIT_ADD(density, kilograms_per_cubic_meter, kilograms_per_cubic_meter, kg_per_cu_m, unit<std::ratio<1>, units::category::density_unit>)
-	UNIT_ADD(density, grams_per_milliliter, grams_per_milliliter, g_per_mL, compound_unit<mass::grams, inverse<volume::milliliter>>)
-	UNIT_ADD(density, kilograms_per_liter, kilograms_per_liter, kg_per_L, unit<std::ratio<1>, compound_unit<mass::grams, inverse<volume::milliliter>>>)
-
-	UNIT_ADD_CATEGORY_TRAIT(density)
-
-	//	UNITS OF CONCENTRATION
-	UNIT_ADD(concentration, percent, percent, pct, unit<std::ratio<1, 100>, units::category::scalar_unit>)
-
-	UNIT_ADD_CATEGORY_TRAIT(concentration)
 
 	//	UNITS OF ENERGY EFFICIENCY
 	UNIT_ADD(energy_efficiency, km_per_kWh, km_per_kWh, kmpkWh, compound_unit<length::kilometers, inverse<energy::kilowatt_hour>>)
@@ -3571,19 +3477,13 @@ namespace units
 		static constexpr const velocity::meters_per_second_t																						c(299792458.0);									///< Speed of light in vacuum.
 		static constexpr const unit_t<compound_unit<cubed<length::meters>, inverse<mass::kilogram>, inverse<squared<time::seconds>>>>				G(6.67408e-11);									///< Newtonian constant of gravitation.
 		static constexpr const unit_t<compound_unit<energy::joule, time::seconds>>																	h(6.626070040e-34);								///< Planck constant.
-		static constexpr const unit_t<compound_unit<force::newtons, inverse<squared<current::ampere>>>>												mu0(pi * 4.0e-7 * force::newton_t(1) / units::math::cpow<2>(current::ampere_t(1)));										///< vacuum permeability.
-		static constexpr const unit_t<compound_unit<capacitance::farad, inverse<length::meter>>>													epsilon0(1.0 / (mu0 * math::cpow<2>(c)));		///< vacuum permitivity.
-		static constexpr const impedance::ohm_t																										Z0(mu0 * c);									///< characteristic impedance of vacuum.
-		static constexpr const unit_t<compound_unit<force::newtons, area::square_meter, inverse<squared<charge::coulomb>>>>							k_e(1.0 / (4 * pi * epsilon0));					///< Coulomb's constant.
 		static constexpr const charge::coulomb_t																									e(1.6021766208e-19);							///< elementary charge.
 		static constexpr const mass::kilogram_t																										m_e(9.10938356e-31);							///< electron mass.
 		static constexpr const mass::kilogram_t																										m_p(1.672621898e-27);							///< proton mass.
-		static constexpr const unit_t<compound_unit<energy::joules, inverse<magnetic_field_strength::tesla>>>										mu_B(e * h / (4 * pi *m_e));					///< Bohr magneton.
 		static constexpr const unit_t<inverse<substance::mol>>																						N_A(6.022140857e23);							///< Avagadro's Number.
 		static constexpr const unit_t<compound_unit<energy::joules, inverse<temperature::kelvin>, inverse<substance::moles>>>						R(8.3144598);									///< Gas constant.
 		static constexpr const unit_t<compound_unit<energy::joules, inverse<temperature::kelvin>>>													k_B(R / N_A);									///< Boltzmann constant.
 		static constexpr const unit_t<compound_unit<charge::coulomb, inverse<substance::mol>>>														F(N_A * e);										///< Faraday constant.
-		static constexpr const unit_t<compound_unit<power::watts, inverse<area::square_meters>, inverse<squared<squared<temperature::kelvin>>>>>	sigma((2 * math::cpow<5>(pi) * math::cpow<4>(R)) / (15 * math::cpow<3>(h) * math::cpow<2>(c) * math::cpow<4>(N_A)));	///< Stefan-Boltzmann constant.
 		/** @} */
 	}
 #endif

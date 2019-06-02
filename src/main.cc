@@ -1,5 +1,6 @@
-//#define UNIT_LIB_DISABLE_IOSTREAM
-#include "units.h"
+#include <vehicle.hh>
+
+#include <units.h>
 using namespace units::literals;
 
 using namespace units;
@@ -23,5 +24,14 @@ int main()
   watt_hour_t energy = distance * nrj_con;
 
   std::cout << "energy needed for " << distance << " is " << energy << std::endl;
+
+  charging_curve_key_points_t cc;
+  cc.emplace_back(0, 15.0_kW);
+  cc.emplace_back(10, 250_kW);
+  cc.emplace_back(20, 250_kW);
+  cc.emplace_back(100, 2.0_kW);
+
+  Vehicle M3("Model 3", 75_kWh, cc);
+
   return 0;
 }

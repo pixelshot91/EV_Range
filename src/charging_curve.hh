@@ -21,6 +21,9 @@ using charging_curve_key_points_t = std::vector<charging_key_point_t>;
 class ChargingCurve {
 public:
   ChargingCurve(charging_curve_key_points_t key_points);
-  double operator()(double soc);
+  ChargingCurve(std::array<power::kilowatt_t, 101> points);
+  ChargingCurve min(const ChargingCurve& other) const;
+  time::minute_t get_time_to_recharge(energy::watt_hour_t energy_to_gain);
+
   std::array<power::kilowatt_t, 101> points;
 };

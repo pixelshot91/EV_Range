@@ -1,6 +1,8 @@
 #include <charging_curve.hh>
 
+using namespace units::literals;
 using namespace units::power;
+using namespace units::time;
 
 ChargingCurve::ChargingCurve(charging_curve_key_points_t key_points)
 {
@@ -22,4 +24,23 @@ ChargingCurve::ChargingCurve(charging_curve_key_points_t key_points)
     points[soc] = prev_point->power + power_incline * (soc - prev_point->soc);
     std::cout << "  Power = " << points[soc] << std::endl;
   }
+}
+
+ChargingCurve::ChargingCurve(std::array<power::kilowatt_t, 101> points)
+  : points(points)
+{}
+
+ChargingCurve ChargingCurve::min(const ChargingCurve& other) const
+{
+  std::array<power::kilowatt_t, 101> points;
+  for (int soc = 0; soc <= 100; soc++)
+    points[soc] = std::min(this->points[soc], other.points[soc]);
+  return ChargingCurve(points);
+}
+
+time::minute_t ChargingCurve::get_time_to_recharge(energy::watt_hour_t energy_to_gain)
+{
+  //best_charging_power = cc.points
+  //for (int soc = 0; soc < 100; soc++)
+  return 2._min;
 }

@@ -1,4 +1,4 @@
-CXX=g++
+CXX=clang++
 CXXFLAGS = -std=c++17 -Isrc
 SRC := main.cc vehicle.cc charging_curve.cc
 SRC := $(addprefix src/, $(SRC))

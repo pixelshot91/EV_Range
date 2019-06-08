@@ -26,9 +26,11 @@ int main()
   std::cout << "energy needed for " << distance << " is " << energy << std::endl;
 
   charging_curve_key_points_t cc;
-  cc.emplace_back(0, 15.0_kW);
-  cc.emplace_back(10, 250_kW);
-  cc.emplace_back(20, 250_kW);
+  cc.emplace_back(0, 75._kW);
+  cc.emplace_back(5, 250._kW);
+  cc.emplace_back(17, 250._kW);
+  cc.emplace_back(20, 200._kW);
+  cc.emplace_back(45, 150._kW);
   cc.emplace_back(100, 2.0_kW);
 
   Vehicle M3("Model 3", 75_kWh, cc);

@@ -6,11 +6,6 @@
 
 using namespace units;
 
-struct soc_interval {
-  double start;
-  double end;
-};
-
 class Vehicle {
 public:
   Vehicle(std::string name, energy::kilowatt_hour_t battery_capacity, charging_curve_key_points_t key_points);

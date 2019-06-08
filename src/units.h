@@ -3353,7 +3353,7 @@ namespace units
 	//	TIME UNITS
 	UNIT_ADD_WITH_METRIC_PREFIXES(time, second, seconds, s, unit<std::ratio<1>, units::category::time_unit>)
 	UNIT_ADD(time, minute, minutes, min, unit<std::ratio<60>, seconds>)
-	UNIT_ADD(time, hour, hours, hr, unit<std::ratio<60>, minutes>)
+	UNIT_ADD(time, hour, hours, h, unit<std::ratio<60>, minutes>)
 	UNIT_ADD(time, day, days, d, unit<std::ratio<24>, hours>)
 	UNIT_ADD(time, week, weeks, wk, unit<std::ratio<7>, days>)
 	UNIT_ADD(time, year, years, yr, unit<std::ratio<365>, days>)

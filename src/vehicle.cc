@@ -14,7 +14,7 @@ time::minute_t Vehicle::get_time_to_recharge(const length::kilometer_t range_to_
 {
   ChargingCurve actual_cc = max_power_cc.min(max_charger_output);
   auto energy_to_gain = en_con_curve.get_consumption_at_speed(100._kph) * range_to_gain;
-  auto t = actual_cc.get_time_to_recharge(energy_to_gain);
+  auto t = actual_cc.get_time_to_recharge(energy_to_gain, battery_capacity);
   return t;
 }
 

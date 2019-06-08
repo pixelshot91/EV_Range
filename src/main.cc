@@ -1,5 +1,7 @@
 #include <vehicle.hh>
 
+#include <tools.hh>
+
 #include <units.h>
 using namespace units::literals;
 
@@ -9,6 +11,7 @@ using namespace units::energy;
 using namespace units::velocity;
 using namespace units::energy_consumption; // For iostream abbrv
 using namespace units::energy_efficiency;
+using namespace units::time;
 
 #include <iostream>
 
@@ -33,9 +36,17 @@ int main()
   cc.emplace_back(45, 150._kW);
   cc.emplace_back(100, 2.0_kW);
 
+  charging_curve_key_points_t cc_up;
+  cc.emplace_back(0, 10._kW);
+  cc.emplace_back(100, 11._kW);
+
+  charging_curve_key_points_t cc_down;
+  cc.emplace_back(0, 11._kW);
+  cc.emplace_back(100, 10._kW);
+
   Vehicle M3("Model 3", 75_kWh, cc);
 
   auto charging_time = M3.get_time_to_recharge(distance, 350.0_kW);
-  std::cout << "Optimal charging time for " << M3 << " to get " << distance << " is " << charging_time << std::endl;
+  std::cout << "Optimal charging time for " << M3 << " to get " << distance << " is " << tools::pretty_print(charging_time) << std::endl;
   return 0;
 }

@@ -16,14 +16,23 @@ struct charging_key_point_t {
   power::kilowatt_t power;
 };
 
+struct soc_interval {
+  double low;
+  double high;
+};
+
 using charging_curve_key_points_t = std::vector<charging_key_point_t>;
 
 class ChargingCurve {
+private:
+  void init_soc_intervals();
 public:
   ChargingCurve(charging_curve_key_points_t key_points);
   ChargingCurve(std::array<power::kilowatt_t, 101> points);
+
   ChargingCurve min(const power::kilowatt_t max_charger_output) const;
-  time::minute_t get_time_to_recharge(energy::watt_hour_t energy_to_gain);
+  time::minute_t get_time_to_recharge(energy::watt_hour_t energy_to_gain, energy::watt_hour_t battery_capacity);
 
   std::array<power::kilowatt_t, 101> points;
+  std::array<soc_interval, 101> soc_intervals;
 };

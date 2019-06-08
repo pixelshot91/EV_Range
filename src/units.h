@@ -2193,7 +2193,7 @@ namespace units
 	inline std::ostream& operator<<(std::ostream& os, const unit_t<Units, T, NonLinearScale>& obj) noexcept
 	{
 		using BaseUnits = unit<std::ratio<1>, typename traits::unit_traits<Units>::base_unit_type>;
-		os << "A" << convert<Units, BaseUnits>(obj()) << "B";
+		os << convert<Units, BaseUnits>(obj());
 
 		if (traits::unit_traits<Units>::base_unit_type::meter_ratio::num != 0) { os << " m"; }
 		if (traits::unit_traits<Units>::base_unit_type::meter_ratio::num != 0 && 

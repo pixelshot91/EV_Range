@@ -12,17 +12,17 @@ ChargingCurve::ChargingCurve(charging_curve_key_points_t key_points)
   auto prev_point = key_points.begin();
   auto next_point = key_points.begin() + 1;
   for (int soc = 0; soc <= 100; soc++) {
-    std::cout << "soc = " << soc;
-    std::cout << ", PREV = " << prev_point->soc;
-    std::cout << ", NEXT = " << next_point->soc;
+    //std::cout << "soc = " << soc;
+    //std::cout << ", PREV = " << prev_point->soc;
+    //std::cout << ", NEXT = " << next_point->soc;
     if (next_point->soc < soc) {
-      std::cout << "CHAGING POINT" << std::endl;
+      //std::cout << "CHAGING POINT" << std::endl;
       prev_point++;
       next_point++;
     }
     auto power_incline = (next_point->power - prev_point->power) / (next_point->soc - prev_point->soc);
     points[soc] = prev_point->power + power_incline * (soc - prev_point->soc);
-    std::cout << "  Power = " << points[soc] << std::endl;
+    //std::cout << "  Power = " << points[soc] << std::endl;
   }
 }
 
@@ -30,11 +30,11 @@ ChargingCurve::ChargingCurve(std::array<power::kilowatt_t, 101> points)
   : points(points)
 {}
 
-ChargingCurve ChargingCurve::min(const ChargingCurve& other) const
+ChargingCurve ChargingCurve::min(const power::kilowatt_t max_charger_output) const
 {
   std::array<power::kilowatt_t, 101> points;
   for (int soc = 0; soc <= 100; soc++)
-    points[soc] = std::min(this->points[soc], other.points[soc]);
+    points[soc] = std::min(this->points[soc], max_charger_output);
   return ChargingCurve(points);
 }
 

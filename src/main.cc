@@ -35,5 +35,7 @@ int main()
 
   Vehicle M3("Model 3", 75_kWh, cc);
 
+  auto charging_time = M3.get_time_to_recharge(distance, 350.0_kW);
+  std::cout << "Optimal charging time for " << M3 << " to get " << distance << " is " << charging_time << std::endl;
   return 0;
 }

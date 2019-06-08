@@ -22,7 +22,7 @@ class ChargingCurve {
 public:
   ChargingCurve(charging_curve_key_points_t key_points);
   ChargingCurve(std::array<power::kilowatt_t, 101> points);
-  ChargingCurve min(const ChargingCurve& other) const;
+  ChargingCurve min(const power::kilowatt_t max_charger_output) const;
   time::minute_t get_time_to_recharge(energy::watt_hour_t energy_to_gain);
 
   std::array<power::kilowatt_t, 101> points;

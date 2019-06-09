@@ -8,9 +8,9 @@ using namespace units;
 
 class Vehicle {
 public:
-  Vehicle(std::string name, energy::kilowatt_hour_t battery_capacity, charging_curve_key_points_t key_points);
+  Vehicle(std::string name, energy::kilowatt_hour_t battery_capacity, charging_curve_key_points_t key_points, EnConCurve en_con_curve);
 
-  time::minute_t get_time_to_recharge(const length::kilometer_t range_to_gain, const power::kilowatt_t max_charger_output);
+  time::minute_t get_time_to_recharge(const length::kilometer_t range_to_gain, const power::kilowatt_t max_charger_output) const;
 
   friend std::ostream& operator<<(std::ostream& os, const Vehicle& v);
 

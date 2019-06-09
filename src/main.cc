@@ -37,16 +37,25 @@ int main()
   cc.emplace_back(100, 2.0_kW);
 
   charging_curve_key_points_t cc_up;
-  cc.emplace_back(0, 10._kW);
-  cc.emplace_back(100, 11._kW);
+  cc_up.emplace_back(0, 10._kW);
+  cc_up.emplace_back(100, 11._kW);
 
   charging_curve_key_points_t cc_down;
-  cc.emplace_back(0, 11._kW);
-  cc.emplace_back(100, 10._kW);
+  cc_down.emplace_back(0, 11._kW);
+  cc_down.emplace_back(100, 10._kW);
 
-  Vehicle M3("Model 3", 75_kWh, cc);
+  charging_curve_key_points_t etron_cc;
+  etron_cc.emplace_back(0, 150._kW);
+  etron_cc.emplace_back(100, 150._kW);
 
-  auto charging_time = M3.get_time_to_recharge(distance, 350.0_kW);
-  std::cout << "Optimal charging time for " << M3 << " to get " << distance << " is " << tools::pretty_print(charging_time) << std::endl;
+  Vehicle M3("Model 3", 75_kWh, cc, 180._Whpkm);
+  Vehicle eTron("E-tron", 90_kWh, etron_cc, 225.0_Whpkm);
+
+  for (const Vehicle& v: {M3, eTron}) {
+    std::cout << " === " << v.name << " ===" << std::endl;
+    auto charging_time = v.get_time_to_recharge(distance, 150._kW);
+    std::cout << "Optimal charging time for " << v << " to get " << distance << " is " << tools::pretty_print(charging_time) << std::endl;
+  }
+
   return 0;
 }

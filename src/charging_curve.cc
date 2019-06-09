@@ -4,21 +4,22 @@
 
 using namespace units::literals;
 using namespace units::power;
+using namespace units::energy;
 using namespace units::time;
 
 void ChargingCurve::init_soc_intervals()
 {
-  auto max = std::max_element(points.rbegin(), points.rend());
+  auto max = std::max_element(points.rbegin() + 1, points.rend());
   auto best_soc = std::distance(points.begin(), max.base() - 1);
 
   auto low_soc = best_soc;
   auto high_soc = best_soc + 1;
 
-  for (int soc_gain = 1; soc_gain < 100; soc_gain++) {
+  for (int soc_gain = 1; soc_gain <= 100; soc_gain++) {
     soc_intervals[soc_gain].low = low_soc;
     soc_intervals[soc_gain].high = high_soc;
-    std::cout << soc_gain << ": " << low_soc << " -> " << high_soc << std::endl;
-    if (points[low_soc - 1] < points[high_soc] || low_soc <= 1)
+    //std::cout << soc_gain << ": " << low_soc << " --> " << high_soc << std::endl;
+    if (high_soc < 100 && (points[low_soc - 1] < points[high_soc] || low_soc < 1))
       high_soc++;
     else
       low_soc--;
@@ -27,7 +28,7 @@ void ChargingCurve::init_soc_intervals()
 
 ChargingCurve::ChargingCurve(charging_curve_key_points_t key_points)
 {
-  if (key_points.front().soc != 0 || key_points.back().soc != 100)
+  if (key_points.size() == 0 || key_points.front().soc != 0 || key_points.back().soc != 100)
     throw std::invalid_argument("Vector should start at 0%% and end at 100%%");
 
   auto prev_point = key_points.begin();
@@ -78,12 +79,14 @@ time::minute_t ChargingCurve::get_time_to_recharge(energy::watt_hour_t energy_to
   std::cout << "soc to gain = " << soc_to_gain << std::endl;
   auto percent_soc = battery_capacity / 100;
   auto charging_time = 0.0_s;
-  const auto& soc_interval = soc_intervals[soc_to_gain];
+  const auto& soc_interval = soc_intervals.at(soc_to_gain);
   for (double soc = soc_interval.low; soc < soc_interval.high; soc++) {
     auto time_1_percent = percent_soc / points[soc];
     charging_time += time_1_percent;
-    std::cout << "time_1_percent " << soc << "= " << time_1_percent << std::endl;
+    //std::cout << "time_1_percent " << soc << "= " << time_1_percent << std::endl;
   }
+  std::cout << "energy needed = " << energy_to_gain << std::endl;
+  std::cout << "energy_gained = " << (soc_interval.high - soc_interval.low) * percent_soc << std::endl;
 
   return charging_time;
 }

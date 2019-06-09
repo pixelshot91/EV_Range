@@ -7,6 +7,6 @@ public:
   EnConCurve(whkm v)
     : v(v)
   {}
-  whkm get_consumption_at_speed(velocity::kilometers_per_hour_t /*s*/) { return v; }
+  whkm get_consumption_at_speed(velocity::kilometers_per_hour_t /*s*/) const { return v; }
   whkm v;
 };

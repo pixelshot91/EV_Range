@@ -1,5 +1,5 @@
 CXX=g++
-CXXFLAGS = -std=c++17 -Isrc #-Wall -Wextra
+CXXFLAGS = -std=c++17 -Isrc -g #-Wall -Wextra
 SRC := main.cc vehicle.cc charging_curve.cc tools.cc
 SRC := $(addprefix src/, $(SRC))
 OBJ := $(subst .cc,.o,$(SRC))

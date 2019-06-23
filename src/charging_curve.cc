@@ -85,8 +85,13 @@ time::minute_t ChargingCurve::get_time_to_recharge(energy::watt_hour_t energy_to
     charging_time += time_1_percent;
     //std::cout << "time_1_percent " << soc << "= " << time_1_percent << std::endl;
   }
-  std::cout << "energy needed = " << energy_to_gain << std::endl;
-  std::cout << "energy_gained = " << (soc_interval.high - soc_interval.low) * percent_soc << std::endl;
+  //std::cout << "energy needed = " << energy_to_gain << std::endl;
+  //std::cout << "energy_gained = " << (soc_interval.high - soc_interval.low) * percent_soc << std::endl;
 
   return charging_time;
+}
+
+soc_interval ChargingCurve::get_soc_interval_for(const energy::watt_hour_t energy_to_gain, energy::watt_hour_t battery_capacity) const {
+  double soc_to_gain = energy_to_gain / battery_capacity * 100;
+  return soc_intervals.at(soc_to_gain);
 }

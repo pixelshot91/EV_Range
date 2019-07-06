@@ -16,6 +16,8 @@ using namespace units::time;
 #include <iostream>
 #include <fstream>
 
+#include <cars/cars.hh>
+
 int main()
 {
   auto distance = 500_km;
@@ -32,14 +34,6 @@ int main()
   watt_hour_t energy = distance * nrj_con;
 
   std::cout << "energy needed for " << distance << " is " << energy << std::endl;
-
-  charging_curve_key_points_t M3_cc;
-  M3_cc.emplace_back(0, 75._kW);
-  M3_cc.emplace_back(5, 250._kW);
-  M3_cc.emplace_back(17, 250._kW);
-  M3_cc.emplace_back(20, 200._kW);
-  M3_cc.emplace_back(45, 150._kW);
-  M3_cc.emplace_back(100, 2.0_kW);
 
   charging_curve_key_points_t MS_cc;
   MS_cc.emplace_back(0, 75._kW);
@@ -62,16 +56,22 @@ int main()
   Vehicle infinite_range("Infinite range", 999999_kWh, etron_cc, 225.0_Whpkm);
 
   // Tesla
-  Vehicle M3("Model 3", 75_kWh, M3_cc, 180._Whpkm);
-  Vehicle MS("Model S", 100_kWh, MS_cc, 190._Whpkm);
+  Vehicle M3SR = cars::Tesla::Model_3_Standard_Range();
+  Vehicle M3LR = cars::Tesla::Model_3_Long_Range();
+  Vehicle MSLR = cars::Tesla::Model_S_Long_Range();
 
   // Audi
   Vehicle eTron("E-tron", 90_kWh, etron_cc, 225.0_Whpkm);
 
   // Nissan
-  //Vehicle Nissan_Leaf_40kWh("Nissan_Leaf_40kWh", 40_kWh, etron_cc, 225.0_Whpkm);
+  charging_curve_key_points_t leaf_cc;
+  leaf_cc.emplace_back(0, 40._kW);
+  leaf_cc.emplace_back(80, 50._kW);
+  leaf_cc.emplace_back(100, 30._kW);
 
-  std::vector vehicles({M3, MS, eTron, infinite_range});
+  Vehicle Nissan_Leaf_40kWh("Nissan_Leaf_40kWh", 40_kWh, leaf_cc, 225.0_Whpkm);
+
+  std::vector vehicles({M3SR, M3LR, MSLR, eTron, infinite_range, Nissan_Leaf_40kWh});
   /*for (const Vehicle& v: {M3, MS}) {
     auto distance = 500._km;
     auto time = v.time_to_do_trip(distance, 200._km, 130._kph);
@@ -101,7 +101,7 @@ int main()
   std::ofstream csv("time_vs_distance.csv");
   //auto& csv = std::cout;
   csv << "Car_name";
-  auto distance_min = 100._km;
+  auto distance_min = 0._km;
   auto distance_max = 1000._km;
   auto distance_inc = 10._km;
   for (auto d = distance_min; d <= distance_max; d += distance_inc)
@@ -110,7 +110,7 @@ int main()
   for (const Vehicle& v: vehicles) {
     csv << v.name;
     for (auto d = distance_min; d <= distance_max; d += distance_inc) {
-      time::minute_t duration = v.time_to_do_trip(d, 200._km, 130._kph);
+      time::minute_t duration = v.time_to_do_trip(d, 100._km, 130._kph);
       csv << ", " << duration.value();
     }
     csv << std::endl;

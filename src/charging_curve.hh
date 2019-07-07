@@ -32,6 +32,7 @@ public:
 
   ChargingCurve min(const power::kilowatt_t max_charger_output) const;
   time::minute_t get_time_to_recharge(energy::watt_hour_t energy_to_gain, energy::watt_hour_t battery_capacity);
+  time::minute_t get_time_to_recharge_soc(soc_interval soc_interval, energy::watt_hour_t battery_capacity) const;
   soc_interval get_soc_interval_for(const energy::watt_hour_t energy_to_gain, energy::watt_hour_t battery_capacity) const;
 
   std::array<power::kilowatt_t, 101> points;

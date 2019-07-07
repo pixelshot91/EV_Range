@@ -59,19 +59,31 @@ int main()
   etron_cc.emplace_back(0, 148._kW);
   etron_cc.emplace_back(100, 150._kW);
 
+  charging_curve_key_points_t leaf_cc;
+  leaf_cc.emplace_back(0, 40._kW);
+  leaf_cc.emplace_back(80, 45._kW);
+  leaf_cc.emplace_back(100, 30._kW);
+  Vehicle Nissan_Leaf_40kWh("Nissan_Leaf_40kWh", 40_kWh, leaf_cc, 215.0_Whpkm);
+
   Vehicle infinite_range("Infinite range", 999999_kWh, etron_cc, 225.0_Whpkm);
 
+  charging_curve_key_points_t gas_cc;
+  gas_cc.emplace_back(0,   998._kW);
+  gas_cc.emplace_back(100, 999._kW);
+  Vehicle human("Human", 100._kWh, gas_cc, 225.0_Whpkm);
+
   // Tesla
-  Vehicle M3("Model 3", 75_kWh, M3_cc, 180._Whpkm);
-  Vehicle MS("Model S", 100_kWh, MS_cc, 190._Whpkm);
+  Vehicle M3("Model 3", 73_kWh, M3_cc, 200._Whpkm);
+  Vehicle MS("Model S", 92_kWh, MS_cc, 210._Whpkm);
 
   // Audi
-  Vehicle eTron("E-tron", 90_kWh, etron_cc, 225.0_Whpkm);
+  Vehicle eTron("E-tron", 84_kWh, etron_cc, 250.0_Whpkm);
 
   // Nissan
   //Vehicle Nissan_Leaf_40kWh("Nissan_Leaf_40kWh", 40_kWh, etron_cc, 225.0_Whpkm);
 
-  std::vector vehicles({M3, MS, eTron, infinite_range});
+  std::vector vehicles({Nissan_Leaf_40kWh, M3, MS, eTron, infinite_range, human});
+  //std::vector vehicles({human});
   /*for (const Vehicle& v: {M3, MS}) {
     auto distance = 500._km;
     auto time = v.time_to_do_trip(distance, 200._km, 130._kph);
@@ -101,17 +113,22 @@ int main()
   std::ofstream csv("time_vs_distance.csv");
   //auto& csv = std::cout;
   csv << "Car_name";
-  auto distance_min = 100._km;
-  auto distance_max = 1000._km;
-  auto distance_inc = 10._km;
+  auto distance_min = 000._km;
+  auto distance_max = 1500._km;
+  //auto distance_min = 646._km;
+  //auto distance_max = 648._km;
+  auto distance_inc = 1._km;
   for (auto d = distance_min; d <= distance_max; d += distance_inc)
     csv << ", time_for_" << d;
   csv << std::endl;
   for (const Vehicle& v: vehicles) {
     csv << v.name;
     for (auto d = distance_min; d <= distance_max; d += distance_inc) {
-      time::minute_t duration = v.time_to_do_trip(d, 200._km, 130._kph);
-      csv << ", " << duration.value();
+      time::minute_t duration = v.time_to_do_trip(d, 150._km, 130._kph);
+      auto average_speed = d / time::hour_t(duration);
+      //csv << ", " << duration.value();
+      csv << ", " << average_speed.value();
+      std::cout << "Drove " << d << " in " << tools::pretty_print(duration) <<std::endl << std::endl;
     }
     csv << std::endl;
   }

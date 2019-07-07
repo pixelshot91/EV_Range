@@ -6,6 +6,7 @@
 namespace tools
 {
   std::string pretty_print(time::second_t t) {
+    //return std::to_string(static_cast<int>(t.value()));
     const unsigned h = t / time::hour_t(1);
     t -= time::hour_t(h);
 

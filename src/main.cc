@@ -34,12 +34,18 @@ int main()
   std::cout << "energy needed for " << distance << " is " << energy << std::endl;
 
   charging_curve_key_points_t M3_cc;
-  M3_cc.emplace_back(0, 75._kW);
+  M3_cc.emplace_back(0, 25._kW);
+  M3_cc.emplace_back(5, 190._kW);
+  M3_cc.emplace_back(17, 190._kW);
+  M3_cc.emplace_back(45, 150._kW);
+  M3_cc.emplace_back(100, 2.0_kW);
+
+  /*M3_cc.emplace_back(0, 75._kW);
   M3_cc.emplace_back(5, 250._kW);
   M3_cc.emplace_back(17, 250._kW);
   M3_cc.emplace_back(20, 200._kW);
   M3_cc.emplace_back(45, 150._kW);
-  M3_cc.emplace_back(100, 2.0_kW);
+  M3_cc.emplace_back(100, 2.0_kW);*/
 
   charging_curve_key_points_t MS_cc;
   MS_cc.emplace_back(0, 75._kW);
@@ -63,21 +69,21 @@ int main()
   leaf_cc.emplace_back(0, 40._kW);
   leaf_cc.emplace_back(80, 45._kW);
   leaf_cc.emplace_back(100, 30._kW);
-  Vehicle Nissan_Leaf_40kWh("Nissan_Leaf_40kWh", 40_kWh, leaf_cc, 215.0_Whpkm);
+  Vehicle Nissan_Leaf_40kWh("Nissan_Leaf_40kWh", Battery(40._kWh, leaf_cc), 215.0_Whpkm);
 
-  Vehicle infinite_range("Infinite range", 999999_kWh, etron_cc, 225.0_Whpkm);
+  Vehicle infinite_range("Infinite range", Battery(999999._kWh, etron_cc), 225.0_Whpkm);
 
   charging_curve_key_points_t gas_cc;
   gas_cc.emplace_back(0,   998._kW);
   gas_cc.emplace_back(100, 999._kW);
-  Vehicle human("Human", 100._kWh, gas_cc, 225.0_Whpkm);
+  Vehicle human("Human", Battery(100._kWh, gas_cc), 225.0_Whpkm);
 
   // Tesla
-  Vehicle M3("Model 3", 78_kWh, M3_cc, 180._Whpkm);
-  Vehicle MS("Model S", 92_kWh, MS_cc, 210._Whpkm);
+  Vehicle M3("Model 3", Battery(73_kWh, M3_cc), 185._Whpkm);
+  Vehicle MS("Model S", Battery(92_kWh, MS_cc), 210._Whpkm);
 
   // Audi
-  Vehicle eTron("E-tron", 84_kWh, etron_cc, 310.0_Whpkm);
+  Vehicle eTron("E-tron", Battery(84_kWh, etron_cc), 310.0_Whpkm);
 
   // Nissan
   //Vehicle Nissan_Leaf_40kWh("Nissan_Leaf_40kWh", 40_kWh, etron_cc, 225.0_Whpkm);
@@ -110,6 +116,9 @@ int main()
     }
     std::cout << std::endl;
   }*/
+
+  /*std::cout << "time to trip " << tools::pretty_print(M3.time_to_do_trip(670._km, 150._km, 130._kph)) << std::endl;
+  return 0;*/
   std::ofstream csv("time_vs_distance.csv");
   //auto& csv = std::cout;
   csv << "Car_name";

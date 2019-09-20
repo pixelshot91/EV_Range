@@ -1,5 +1,9 @@
 #pragma once
 
+#include "units.h"
+using namespace units;
+using namespace units::energy_consumption;
+
 using whkm = energy_consumption::Wh_per_km_t;
 
 class EnConCurve {

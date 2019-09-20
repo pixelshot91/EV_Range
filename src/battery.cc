@@ -1,0 +1,47 @@
+#include <battery.hh>
+
+using namespace units::literals;
+using namespace units::power;
+Battery::Battery(energy::kilowatt_hour_t capacity, ChargingCurve cc)
+  : capacity(capacity),
+    maximum_cc(cc)
+{
+  //cc_map.insert({power::kilowatt_t(NAN), cc});
+}
+
+const ChargingCurve& Battery::get_cc(power::kilowatt_t max_charger_power) const
+{
+  //std::map<double, ChargingCurve> m;
+  ChargingCurve low_cc = maximum_cc.min(max_charger_power);
+  //m.insert(std::pair(12, low_cc));
+  if (!cc_map.count(max_charger_power)) {
+
+    cc_map.insert(std::pair(max_charger_power, low_cc));
+  }
+  auto it = cc_map.find(max_charger_power);
+  if (it == cc_map.end()) {
+    throw std::invalid_argument("Impossible, cc not found");
+  }
+  const ChargingCurve& cc = it->second;
+  return cc;
+}
+
+soc_interval Battery::get_soc_interval_for(const energy::watt_hour_t energy_to_gain, const power::kilowatt_t max_charger_power) const
+{
+  return get_cc(max_charger_power).get_soc_interval_for(energy_to_gain, capacity);
+}
+
+time::minute_t Battery::get_time_to_recharge(const soc_interval si, const power::kilowatt_t max_charger_power) const {
+  return get_cc(max_charger_power).get_time_to_recharge_soc(si, capacity);
+}
+
+time::minute_t Battery::get_time_to_recharge(const energy::watt_hour_t energy_to_gain, const double minimum_soc, const power::kilowatt_t max_charger_power) const
+{
+  auto si = get_soc_interval_for(energy_to_gain, max_charger_power);
+  if (si.low < minimum_soc) {
+    std::cout << "re adjusting soc" << std::endl;
+    si.high += minimum_soc - si.low;
+    si.low = minimum_soc;
+  }
+  return get_time_to_recharge(si, max_charger_power);
+}

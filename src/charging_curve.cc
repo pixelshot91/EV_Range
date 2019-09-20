@@ -115,7 +115,6 @@ time::minute_t ChargingCurve::get_time_to_recharge_soc(soc_interval soc_interval
   return charging_time;
 }
 
-
 soc_interval ChargingCurve::get_soc_interval_for(const energy::watt_hour_t energy_to_gain, energy::watt_hour_t battery_capacity) const {
   double soc_to_gain = energy_to_gain / battery_capacity * 100;
   return soc_intervals.at(soc_to_gain);

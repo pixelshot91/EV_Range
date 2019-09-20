@@ -1,6 +1,6 @@
 CXX=g++
 CXXFLAGS = -std=c++17 -Isrc -g -Wall -Wextra
-SRC := main.cc vehicle.cc charging_curve.cc tools.cc
+SRC := main.cc vehicle.cc charging_curve.cc tools.cc battery.cc
 SRC := $(addprefix src/, $(SRC))
 OBJ := $(subst .cc,.o,$(SRC))
 BIN := ev_range

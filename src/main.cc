@@ -1,4 +1,4 @@
-#include <vehicle.hh>
+#include <driver_vehicle.hh>
 
 #include <tools.hh>
 
@@ -72,6 +72,8 @@ int main()
   Vehicle Nissan_Leaf_40kWh("Nissan_Leaf_40kWh", Battery(40._kWh, leaf_cc), 215.0_Whpkm);
 
   Vehicle infinite_range("Infinite range", Battery(999999._kWh, etron_cc), 225.0_Whpkm);
+  Driver d;
+  DriverVehicle(d, infinite_range);
 
   charging_curve_key_points_t gas_cc;
   gas_cc.emplace_back(0,   998._kW);

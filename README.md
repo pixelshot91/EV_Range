@@ -1,6 +1,23 @@
 # EVLDC - Electric Vehicle Long Distance Capability
 
 ## Introduction
+EVLDC enables quick and easy visual comparison of various EV Long Distance Capabilities.
+It shows in a graph the average speed of a vehicle as a function of distance for a set cruising speed, taking into account the charging time and the rest time of the driver.
+The average speed will be slightly lower than the cruising speed for an fast recharging car (e.g. an ICE car) and will drop significantly for an EV after the initial range has been exhausted.
+An EV which can charge with a lot of power for a long time (the area under the charging curve is great), and which is efficient (the energy consummed by unit of distance is low) will charge faster and will lose less time at charging stop, thus increasing the overall average speed.
+
+## Setup
+```
+sudo apt install python3-pip
+pip3 install matplotlib
+pip3 install scipy
+```
+## Build
+```
+make
+./ev_range
+python3 python_graph/main.py
+```
 
 ## Dependencies
 ### C++ Units
@@ -30,12 +47,6 @@ Chart option
           \+ official, color channel (AreaChart), smooth zoom, click on legend to hide/show (legendMarker), fast (OpenGL series)  
           \- closed source
 
-
-
-```
-s = "Python syntax highlighting"
-print s
-```
 
 ### QCustomPlot Installation  
   GO to https://www.qcustomplot.com/index.php/download and download QCustomPlot.tar.gz.

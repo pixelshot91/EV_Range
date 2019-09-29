@@ -1,5 +1,7 @@
 #include <driver.hh>
 
+#include <tools.hh>
+
 Driver::Driver(std::string name)
 	: name(name)
 {
@@ -11,13 +13,14 @@ Driver::Driver(std::string name)
 
 void Driver::rest() {
 	it = pauses.begin();
+	driving_time = 0._min;
 }
 
 void Driver::drive_for(const time::minute_t time) {
   const Pause& p = *it;
   driving_time += time;
-  if (p.interval > driving_time)
-    std::cout << "Pause overrun" << std::endl;
+  if (driving_time > p.interval)
+    throw std::invalid_argument("Pause overrun. Driving for " + tools::pretty_print(driving_time) + " but driver can only drive for " + tools::pretty_print(p.interval));
 }
 
 time::minute_t Driver::take_a_pause() {

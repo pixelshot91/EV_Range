@@ -68,6 +68,7 @@ with open('time_vs_distance.csv') as csv_file:
     plt.minorticks_on()
     plt.grid(True, which='major', linewidth=0.3)
     plt.grid(True, which='minor', linewidth=0.1)
+    plt.xlim(0, None);
     fig1 = plt.gcf()
     fig1.text(0.05, 0.02, 'Julien Gautier (' + str(datetime.date.today()) + ')', fontsize=10, color='gray', ha='left', va='bottom', alpha=0.5)
     plt.show()

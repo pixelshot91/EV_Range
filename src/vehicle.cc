@@ -12,7 +12,8 @@ Vehicle::Vehicle(std::string name, Battery battery, EnConCurve en_con_curve)
   : name(name)
   , battery(battery)
   , en_con_curve(en_con_curve)
-{}
+{
+}
 
 /*time::minute_t Vehicle::get_time_to_recharge(const length::kilometer_t range_to_gain, const power::kilowatt_t max_charger_output) const
 {

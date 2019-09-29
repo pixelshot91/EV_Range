@@ -19,12 +19,13 @@ struct Pause {
 
 class Driver {
 public:
-  Driver();
-  time::minute_t time_to_next_pause() const;
+  Driver(std::string name);
+	void rest();
   void drive_for(const time::minute_t);
   time::minute_t take_a_pause();
   time::minute_t time_before_pause() const;
 
+	const std::string name;
   std::vector<Pause> pauses;
   std::vector<Pause>::iterator it;
   // Driving time since last pause

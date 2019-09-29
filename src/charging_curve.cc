@@ -10,6 +10,7 @@ using namespace units::time;
 void ChargingCurve::init_soc_intervals()
 {
   auto max = std::max_element(points.rbegin() + 1, points.rend());
+	peak_power = *max;
   auto best_soc = std::distance(points.begin(), max.base() - 1);
 
 
@@ -118,4 +119,26 @@ time::minute_t ChargingCurve::get_time_to_recharge_soc(soc_interval soc_interval
 soc_interval ChargingCurve::get_soc_interval_for(const energy::watt_hour_t energy_to_gain, energy::watt_hour_t battery_capacity) const {
   double soc_to_gain = energy_to_gain / battery_capacity * 100;
   return soc_intervals.at(soc_to_gain);
+}
+
+energy::kilowatt_hour_t ChargingCurve::energy_gained_from_charging(double soc, time::minute_t duration, energy::watt_hour_t battery_capacity) const {
+	int soci = soc * 100.0;
+	//std::cout << "1/ soci = " << soci << std::endl;
+	if (soci == 100)
+		return battery_capacity;
+	if (soci > 100)
+		throw std::invalid_argument("soci over 100%%");
+
+
+  auto percent_soc = battery_capacity / 100;
+  auto charging_time = 0.0_s;
+	while (charging_time < duration) {
+    auto time_1_percent = percent_soc / points[soci];
+    charging_time += time_1_percent;
+		soci++;
+		if (soci >= 100)
+			break;
+	}
+	//std::cout << "2/ soci = " << soci << std::endl;
+	return battery_capacity * (soci / 100.0);
 }

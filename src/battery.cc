@@ -4,13 +4,34 @@ using namespace units::literals;
 using namespace units::power;
 Battery::Battery(energy::kilowatt_hour_t capacity, ChargingCurve cc)
   : capacity(capacity),
+		energy(capacity),
     maximum_cc(cc)
 {
   //cc_map.insert({power::kilowatt_t(NAN), cc});
 }
 
+void Battery::set_to_full() {
+	energy = capacity;
+}
+
+void Battery::discharge(energy::kilowatt_hour_t e) {
+	if (e > energy)
+		throw std::invalid_argument("Cant remove so much energy from battery");
+	energy -= e;
+}
+
+void Battery::charge_for(time::minute_t duration, power::kilowatt_t max_charger_power) {
+	if (energy > capacity)
+		throw std::invalid_argument("Battery more than 100%% before charging");
+	energy = get_cc(max_charger_power).energy_gained_from_charging(energy/capacity, duration, capacity);
+	if (energy > capacity)
+		throw std::invalid_argument("Battery more than 100%% after charging");
+}
+
 const ChargingCurve& Battery::get_cc(power::kilowatt_t max_charger_power) const
 {
+	if (max_charger_power >= maximum_cc.peak_power)
+		return maximum_cc;
   //std::map<double, ChargingCurve> m;
   ChargingCurve low_cc = maximum_cc.min(max_charger_power);
   //m.insert(std::pair(12, low_cc));

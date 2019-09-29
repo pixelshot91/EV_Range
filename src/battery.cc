@@ -28,6 +28,16 @@ void Battery::charge_for(time::minute_t duration, power::kilowatt_t max_charger_
 		throw std::invalid_argument("Battery more than 100%% after charging");
 }
 
+time::minute_t Battery::charge_to(Soc soc_goal, power::kilowatt_t max_charger_power) {
+	auto time = get_time_to_recharge(soc_interval(soc(), soc_goal), max_charger_power);
+	energy = capacity * soc_goal.as_ratio();
+	return time;
+}
+
+Soc Battery::soc() const {
+	return Soc(energy / capacity);
+}
+
 const ChargingCurve& Battery::get_cc(power::kilowatt_t max_charger_power) const
 {
 	if (max_charger_power >= maximum_cc.peak_power)
@@ -56,13 +66,13 @@ time::minute_t Battery::get_time_to_recharge(const soc_interval si, const power:
   return get_cc(max_charger_power).get_time_to_recharge_soc(si, capacity);
 }
 
-time::minute_t Battery::get_time_to_recharge(const energy::watt_hour_t energy_to_gain, const double minimum_soc, const power::kilowatt_t max_charger_power) const
+time::minute_t Battery::get_time_to_recharge(const energy::watt_hour_t energy_to_gain, const Soc minimum_soc, const power::kilowatt_t max_charger_power) const
 {
   auto si = get_soc_interval_for(energy_to_gain, max_charger_power);
-  if (si.low < minimum_soc) {
+  if (si.low.as_ratio() < minimum_soc.as_ratio()) {
     std::cout << "re adjusting soc" << std::endl;
-    si.high += minimum_soc - si.low;
-    si.low = minimum_soc;
+    si.high.set(si.high.as_ratio() + minimum_soc.as_ratio() - si.low.as_ratio());
+    si.low.set(minimum_soc.as_ratio());
   }
   return get_time_to_recharge(si, max_charger_power);
 }

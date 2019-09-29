@@ -3,10 +3,9 @@
 Driver::Driver(std::string name)
 	: name(name)
 {
-  pauses.emplace_back(20._h, 15._min);
-  //pauses.emplace_back(3._h, 45._min);
-  /*pauses.emplace_back(2._h, 15._min);
-  pauses.emplace_back(2._h, 15._min);*/
+  pauses.emplace_back(2._h, 15._min);
+  pauses.emplace_back(3._h, 45._min);
+  pauses.emplace_back(2._h, 15._min);
   it = pauses.begin();
 }
 
@@ -37,4 +36,8 @@ time::minute_t Driver::time_before_pause() const
 		throw std::invalid_argument("no more pause");
 	//std::cout << "time before pause = " << tools::pretty_print(it->interval - driving_time);
   return it->interval - driving_time;
+}
+
+time::minute_t Driver::next_pause_duration() const {
+	return it->duration;
 }

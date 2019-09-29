@@ -24,6 +24,7 @@ public:
   void drive_for(const time::minute_t);
   time::minute_t take_a_pause();
   time::minute_t time_before_pause() const;
+	time::minute_t next_pause_duration() const;
 
 	const std::string name;
   std::vector<Pause> pauses;

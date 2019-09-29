@@ -38,12 +38,12 @@ std::vector<time::second_t> Vehicle::get_time_for_distance(const length::kilomet
 
 time::second_t Vehicle::time_to_do_trip(const length::kilometer_t distance_goal, const length::kilometer_t distance_between_charger, const velocity::kilometers_per_hour_t cruising_speed) const
 {
-  bool debug = true;
+  bool debug = false;
   auto charger_detour = 5._min;
   auto en_con = en_con_curve.get_consumption_at_speed(cruising_speed);
   auto range = battery.capacity / en_con;
-  const double minimum_soc = 0.10;
-  auto usable_range = range * (1.0 - minimum_soc);
+  const Soc minimum_soc(0.10);
+  auto usable_range = range * (1.0 - minimum_soc.as_ratio());
   if (debug) std::cout << "distance goal = " << distance_goal << ", range = " << range << std::endl;
   if (range > distance_goal)
     return distance_goal / cruising_speed;
@@ -57,7 +57,7 @@ time::second_t Vehicle::time_to_do_trip(const length::kilometer_t distance_goal,
   if (distance_goal < 1.8 * usable_range) {
     if (debug) std::cout << "distance_goal < 2 * range" << std::endl;
     auto energy_needed = distance_goal * en_con;
-    energy::kilowatt_hour_t energy_to_gain = energy_needed - battery.capacity * (1.0 - minimum_soc);
+    energy::kilowatt_hour_t energy_to_gain = energy_needed - battery.capacity * (1.0 - minimum_soc.as_ratio());
     if (debug) std::cout << "energy_to_gain = " << energy_to_gain << std::endl;
     auto charging_time = battery.get_time_to_recharge(energy_to_gain, minimum_soc, max_charger_power);
     if (debug) std::cout << "Driving for " << tools::pretty_print(distance_goal / cruising_speed) << std::endl
@@ -66,15 +66,15 @@ time::second_t Vehicle::time_to_do_trip(const length::kilometer_t distance_goal,
     return distance_goal / cruising_speed + charging_time + charger_detour;
   }
   auto soc_interval = battery.get_soc_interval_for(distance_between_charger * en_con, max_charger_power);
-  if (debug) std::cout << "low_soc = " << soc_interval.low << std::endl;
+  if (debug) std::cout << "low_soc = " << soc_interval.low.str() << std::endl;
 
-  length::kilometer_t distance_driven = battery.capacity * (1.0 - (soc_interval.low / 100.0)) / en_con;
+  length::kilometer_t distance_driven = battery.capacity * (1.0 - soc_interval.low.as_ratio()) / en_con;
   //const int soc_stop_charging = 80;
   auto time = distance_driven / cruising_speed;
   if (debug) std::cout << "First leg: " << distance_driven << " in " << tools::pretty_print(time) << std::endl;
 
   // We are at soc_interval.low
-  while (distance_driven + (soc_interval.high / 100.0) * battery.capacity / en_con < distance_goal
+  while (distance_driven + soc_interval.high.as_ratio() * battery.capacity / en_con < distance_goal
       && distance_driven < distance_goal - distance_between_charger) {
 
     auto charging_time = battery.get_time_to_recharge(distance_between_charger * en_con, minimum_soc, max_charger_power);
@@ -88,12 +88,13 @@ time::second_t Vehicle::time_to_do_trip(const length::kilometer_t distance_goal,
   // We are at soc_interval.low
   auto distance_last_leg = distance_goal - distance_driven;
   auto needed_energy = distance_last_leg * en_con;
-  battery_energy = (soc_interval.low / 100) * battery.capacity;
+  battery_energy = soc_interval.low.as_ratio() * battery.capacity;
   auto missing_energy = needed_energy - battery_energy;
-  auto goal_soc = (needed_energy / battery.capacity) * 100;
+  Soc goal_soc(needed_energy / battery.capacity);
   if (missing_energy > 0._kWh) {
-    if (debug) std::cout << "goal soc is " << goal_soc << std::endl;
+    if (debug) std::cout << "goal soc is " << goal_soc.str() << std::endl;
     struct soc_interval si = {soc_interval.low, goal_soc};
+
     auto charging_time = battery.get_time_to_recharge(si, max_charger_power);
     if (debug) std::cout << "Last Charging stop for " << tools::pretty_print(charging_time) << std::endl;
     time += charging_time + charger_detour;

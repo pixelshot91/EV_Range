@@ -97,8 +97,8 @@ soc_interval ChargingCurve::get_soc_interval_for(const energy::watt_hour_t energ
   return soc_intervals.at(soc_to_gain);
 }
 
-energy::kilowatt_hour_t ChargingCurve::energy_gained_from_charging(double soc, time::minute_t duration, energy::watt_hour_t battery_capacity) const {
-	int soci = soc * 100.0;
+energy::kilowatt_hour_t ChargingCurve::energy_gained_from_charging(Soc soc, time::minute_t duration, energy::watt_hour_t battery_capacity) const {
+	int soci = soc.as_percentage();
 	//std::cout << "1/ soci = " << soci << std::endl;
 	if (soci == 100)
 		return battery_capacity;

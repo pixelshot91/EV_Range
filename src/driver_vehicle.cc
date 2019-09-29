@@ -14,19 +14,18 @@ std::string DriverVehicle::name() const {
 
 time::second_t DriverVehicle::time_to_do_trip(const length::kilometer_t distance_goal, const length::kilometer_t distance_between_charger, const velocity::kilometers_per_hour_t cruising_speed)
 {
-	const bool debug = false;
+	const bool debug = true;
 	
 	auto charger_detour = 5._min;
 	auto max_charger_power = 35099._kW;
-	const double minimum_soc = 0.10;
+	const Soc minimum_soc(0.10);
 
 	
 	Battery& battery = vehicle.battery;
 	auto en_con = vehicle.en_con_curve.get_consumption_at_speed(cruising_speed);
-	if (debug) std::cout << "en_con " << en_con << std::endl;
 	length::kilometer_t range = vehicle.battery.capacity / en_con;
 	
-	if (debug) std::cout << "distance goal = " << length::kilometer_t(distance_goal) << ", range = " << range << std::endl;
+	if (debug) std::cout << "\ndistance goal = " << length::kilometer_t(distance_goal) << ", range = " << range << std::endl;
 	
 	auto soc_interval = battery.get_soc_interval_for(distance_between_charger * en_con, max_charger_power);
 	if (debug) std::cout << "soc_interval low=" << soc_interval.low << ", high=" << soc_interval.high << std::endl;
@@ -38,12 +37,9 @@ time::second_t DriverVehicle::time_to_do_trip(const length::kilometer_t distance
 	driver.rest();
 	auto total_time = 0._min;
 	auto total_distance_driven = 0._km;
-	const auto reserve_energy = battery.capacity * minimum_soc;
+	const auto reserve_energy = battery.capacity * minimum_soc.as_ratio();
 
 	while (total_distance_driven < distance_goal) {
-		if (debug) std::cout << "available energy = " << (battery.energy - reserve_energy) << battery.energy << reserve_energy << std::endl;
-		//auto distance_driven = std::min((battery.energy - reserve_energy) / en_con, distance_goal - total_distance_driven);
-		//length::kilometer_t distance_driven = std::min((battery.energy - reserve_energy) / en_con, distance_goal - total_distance_driven);
 		length::kilometer_t d1 = (battery.energy - reserve_energy) / en_con;
 		length::kilometer_t distance_remaining = distance_goal - total_distance_driven;
 
@@ -60,19 +56,19 @@ time::second_t DriverVehicle::time_to_do_trip(const length::kilometer_t distance
 			pause_needed = true;
 		}
 		
-		/*if (distance_remaining < ) {
-			
-		}*/
-
 		// Driving
 		battery.discharge(distance_driven * en_con);
 		total_time += driving_time;
+		driver.drive_for(driving_time);
 		total_distance_driven += distance_driven;
 
 		distance_remaining = distance_goal - total_distance_driven;
 
 		if (total_distance_driven >= distance_goal)
 			break;
+
+		if (driver.time_before_pause() < 15._min)
+			pause_needed = true;
 		
 		// Charging + Pause
 		if (pause_needed) {

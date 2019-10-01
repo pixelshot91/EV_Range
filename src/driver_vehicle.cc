@@ -14,19 +14,19 @@ std::string DriverVehicle::name() const {
 
 time::second_t DriverVehicle::time_to_do_trip(const length::kilometer_t distance_goal, const length::kilometer_t distance_between_charger, const velocity::kilometers_per_hour_t cruising_speed)
 {
-	const bool debug = true;
-	
+	const bool debug = false;
+
 	auto charger_detour = 5._min;
 	auto max_charger_power = 35099._kW;
 	const Soc minimum_soc(0.10);
 
-	
+
 	Battery& battery = vehicle.battery;
 	auto en_con = vehicle.en_con_curve.get_consumption_at_speed(cruising_speed);
 	length::kilometer_t range = vehicle.battery.capacity / en_con;
-	
+
 	if (debug) std::cout << "\ndistance goal = " << length::kilometer_t(distance_goal) << ", range = " << range << std::endl;
-	
+
 	auto soc_interval = battery.get_soc_interval_for(distance_between_charger * en_con, max_charger_power);
 	if (debug) std::cout << "soc_interval low=" << soc_interval.low << ", high=" << soc_interval.high << std::endl;
 	//double low_soc = std::max(soc_interval.low / 100.0, minimum_soc);
@@ -45,7 +45,7 @@ time::second_t DriverVehicle::time_to_do_trip(const length::kilometer_t distance
 
 		//length::kilometer_t distance_driven = (battery.energy - reserve_energy) / en_con;
 		auto distance_driven = std::min(d1, distance_remaining);
-		
+
 		auto driving_time = distance_driven / cruising_speed;
 		if (debug) std::cout << "Vehicle can drive " << distance_driven << " in " << tools::pretty_print(driving_time) << std::endl;
 		bool pause_needed = false;
@@ -55,7 +55,7 @@ time::second_t DriverVehicle::time_to_do_trip(const length::kilometer_t distance
 			if (debug) std::cout << "But driver can only drive for " << tools::pretty_print(driving_time) << " (" << distance_driven << ")" << std::endl;
 			pause_needed = true;
 		}
-		
+
 		// Driving
 		battery.discharge(distance_driven * en_con);
 		total_time += driving_time;
@@ -69,7 +69,7 @@ time::second_t DriverVehicle::time_to_do_trip(const length::kilometer_t distance
 
 		if (driver.time_before_pause() < 15._min)
 			pause_needed = true;
-		
+
 		// Charging + Pause
 		if (pause_needed) {
 			auto pause_duration = driver.take_a_pause();

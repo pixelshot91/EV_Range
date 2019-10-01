@@ -87,18 +87,17 @@ int main()
   //Vehicle Nissan_Leaf_40kWh("Nissan_Leaf_40kWh", 40_kWh, etron_cc, 225.0_Whpkm);
 
   Vehicle infinite_range("Infinite range", Battery(999999._kWh, etron_cc), 225.0_Whpkm);
-  Driver d("Normal driver");
-  DriverVehicle dv_infinite(d, infinite_range);
-	//std::vector dvs({dv_infinite});
-	//std::vector<DriverVehicle> dvs({{d, infinite_range}});
-	std::vector<DriverVehicle> dvs;
-	//dvs.emplace_back({d, infinite_range});
-	//dvs.emplace_back(d, M3);
+
+  Driver slow_driver("Slow driver", {{1.5_h, 20._min}, {1.5_h, 20._min}, {2._h, 45._min}});
+  Driver normal_driver("Normal driver", {{2._h, 15._min}, {3._h, 30._min}});
+  Driver speedy_driver("Speedy driver", {{4._h, 5._min}});
+
+  std::vector<DriverVehicle> dvs;
 
   std::vector vehicles({Nissan_Leaf_40kWh, M3, MS, eTron, infinite_range});
   //std::vector vehicles({eTron});
 	for (auto& v: vehicles)
-		dvs.emplace_back(d, v);
+		dvs.emplace_back(slow_driver, v);
 
   std::ofstream csv("time_vs_distance.csv");
   //auto& csv = std::cout;

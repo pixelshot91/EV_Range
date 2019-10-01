@@ -2,12 +2,10 @@
 
 #include <tools.hh>
 
-Driver::Driver(std::string name)
+Driver::Driver(std::string name, std::vector<Pause> pauses)
 	: name(name)
+	, pauses(pauses)
 {
-  pauses.emplace_back(2._h, 15._min);
-  pauses.emplace_back(3._h, 45._min);
-  pauses.emplace_back(2._h, 15._min);
   it = pauses.begin();
 }
 

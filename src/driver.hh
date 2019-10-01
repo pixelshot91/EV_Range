@@ -19,7 +19,7 @@ struct Pause {
 
 class Driver {
 public:
-  Driver(std::string name);
+  Driver(std::string name, std::vector<Pause> pauses);
 	void rest();
   void drive_for(const time::minute_t);
   time::minute_t take_a_pause();
